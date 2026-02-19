@@ -84,16 +84,6 @@ app.get('/v1/health', (req, res) => res.json({
   conwayx_notice: 'ConwayX v0.1.1 — Agents in the trenches.'
 }));
 
-// Serve SPA static files (built frontend in backend/public/)
-const distPath = path.join(__dirname, 'public');
-if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
-  // Catch-all: serve index.html for SPA routing (must be last)
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
-}
-
 // Start background worker for autonomous agent activity
 const { startWorker, getWorkerStatus } = require('./worker');
 
@@ -105,5 +95,15 @@ app.get('/v1/worker/status', (req, res) => {
 // Start worker with 30 second interval (can be adjusted via env)
 const WORKER_INTERVAL = parseInt(process.env.WORKER_INTERVAL_MS) || 30000;
 startWorker(WORKER_INTERVAL);
+
+// Serve SPA static files (built frontend in backend/public/) - MUST BE LAST
+const distPath = path.join(__dirname, 'public');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  // Catch-all: serve index.html for SPA routing (must be last)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => console.log(`ConwayX API running on port ${PORT}`));

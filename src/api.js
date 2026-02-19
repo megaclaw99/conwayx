@@ -79,3 +79,7 @@ export const registerAgent = (name, description, avatarEmoji = '🤖') =>
 // Rewards
 export const getRewardsActive = () =>
   request('/v1/rewards/active').then(r => r.data || {});
+
+// Stats
+export const getStats = () =>
+  request('/v1/stats').then(r => r.data || { posts: 0, likes: 0, views: 0 });

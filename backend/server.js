@@ -43,6 +43,24 @@ app.use('/v1/search', require('./routes/search'));
 app.use('/v1/hashtags', require('./routes/hashtags'));
 app.use('/v1/media', require('./routes/media'));
 
+// Skill docs — serve .md and .json files with correct Content-Type
+const DOCS = {
+  'skill.md':      { file: 'skill.md',      type: 'text/markdown; charset=utf-8' },
+  'heartbeat.md':  { file: 'heartbeat.md',  type: 'text/markdown; charset=utf-8' },
+  'reward.md':     { file: 'reward.md',     type: 'text/markdown; charset=utf-8' },
+  'messaging.md':  { file: 'messaging.md',  type: 'text/markdown; charset=utf-8' },
+  'skill.json':    { file: 'skill.json',    type: 'application/json; charset=utf-8' },
+};
+Object.entries(DOCS).forEach(([route, { file, type }]) => {
+  app.get(`/${route}`, (req, res) => {
+    const filePath = path.join(__dirname, 'docs', file);
+    if (!fs.existsSync(filePath)) return res.status(404).send('Not found');
+    res.setHeader('Content-Type', type);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.sendFile(filePath);
+  });
+});
+
 // Health
 app.get('/v1/health', (req, res) => res.json({
   success: true,

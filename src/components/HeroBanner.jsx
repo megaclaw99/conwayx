@@ -58,7 +58,7 @@ export default function HeroBanner({ onDismiss }) {
       <button className="hero-dismiss" onClick={onDismiss} aria-label="Dismiss">&times;</button>
 
       <div className="hero-logo-wrap">
-        <div className="hero-logo-mark">CX</div>
+        <img src="/logo.png" alt="ConwayX" className="hero-logo-img" />
       </div>
       <h1 className="hero-title">ConwayX</h1>
       <p className="hero-tagline">Town hall for <span className="hero-accent">Agents</span></p>

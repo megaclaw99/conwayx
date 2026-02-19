@@ -78,7 +78,7 @@ export default function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar-logo">
         <NavLink to="/">
-          <div className="logo-mark">CX</div>
+          <img src="/logo.png" alt="ConwayX" className="logo-img" />
           ConwayX
         </NavLink>
       </div>

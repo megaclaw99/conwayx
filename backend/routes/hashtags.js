@@ -9,34 +9,58 @@ router.get('/trending', optionalAuth, (req, res) => {
   const db = getDb();
   const limit = Math.min(parseInt(req.query.limit) || 20, 50);
 
-  const trending = db.prepare(`
-    SELECT ph.hashtag, COUNT(*) as count
+  // Get trending hashtags (last 24h)
+  const trendingHashtags = db.prepare(`
+    SELECT ph.hashtag as tag, 'hashtag' as type, COUNT(*) as count
     FROM post_hashtags ph
     JOIN posts p ON p.id = ph.post_id
     WHERE p.deleted = 0
       AND p.created_at >= datetime('now', '-24 hours')
     GROUP BY ph.hashtag
-    ORDER BY count DESC
-    LIMIT ?
-  `).all(limit);
+  `).all();
 
-  // If less than 20 trending in last 24h, fill with all-time
+  // Get trending cashtags (last 24h)
+  const trendingCashtags = db.prepare(`
+    SELECT pc.cashtag as tag, 'cashtag' as type, COUNT(*) as count
+    FROM post_cashtags pc
+    JOIN posts p ON p.id = pc.post_id
+    WHERE p.deleted = 0
+      AND p.created_at >= datetime('now', '-24 hours')
+    GROUP BY pc.cashtag
+  `).all();
+
+  // Combine and sort
+  let trending = [...trendingHashtags, ...trendingCashtags]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
+
+  // If less than limit trending in last 24h, fill with all-time
   if (trending.length < limit) {
-    const existing = new Set(trending.map(t => t.hashtag));
-    const allTime = db.prepare(`
-      SELECT ph.hashtag, COUNT(*) as count
+    const existing = new Set(trending.map(t => t.tag));
+    
+    const allTimeHashtags = db.prepare(`
+      SELECT ph.hashtag as tag, 'hashtag' as type, COUNT(*) as count
       FROM post_hashtags ph
       JOIN posts p ON p.id = ph.post_id
       WHERE p.deleted = 0
       GROUP BY ph.hashtag
-      ORDER BY count DESC
-      LIMIT ?
-    `).all(limit);
+    `).all();
+
+    const allTimeCashtags = db.prepare(`
+      SELECT pc.cashtag as tag, 'cashtag' as type, COUNT(*) as count
+      FROM post_cashtags pc
+      JOIN posts p ON p.id = pc.post_id
+      WHERE p.deleted = 0
+      GROUP BY pc.cashtag
+    `).all();
+
+    const allTime = [...allTimeHashtags, ...allTimeCashtags]
+      .sort((a, b) => b.count - a.count);
 
     for (const t of allTime) {
-      if (!existing.has(t.hashtag) && trending.length < limit) {
+      if (!existing.has(t.tag) && trending.length < limit) {
         trending.push({ ...t, all_time: true });
-        existing.add(t.hashtag);
+        existing.add(t.tag);
       }
     }
   }
@@ -44,7 +68,11 @@ router.get('/trending', optionalAuth, (req, res) => {
   return successResponse(res, {
     trending: trending.map((t, i) => ({
       rank: i + 1,
-      hashtag: t.hashtag,
+      tag: t.tag,
+      type: t.type,
+      // For backward compatibility, also include hashtag field for hashtags
+      hashtag: t.type === 'hashtag' ? t.tag : undefined,
+      cashtag: t.type === 'cashtag' ? t.tag : undefined,
       count: t.count,
       all_time: !!t.all_time
     })),

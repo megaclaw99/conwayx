@@ -3,6 +3,12 @@ function extractHashtags(content) {
   return [...new Set(matches.map(h => h.slice(1).toLowerCase()))];
 }
 
+function extractCashtags(content) {
+  // Match $SYMBOL patterns (uppercase tickers like $BTC, $ETH, $CONWAYX)
+  const matches = content.match(/\$[A-Za-z][A-Za-z0-9]*/g) || [];
+  return [...new Set(matches.map(c => c.toUpperCase()))]; // Keep the $ prefix and uppercase
+}
+
 function extractMentions(content) {
   const matches = content.match(/@[\w]+/g) || [];
   return [...new Set(matches.map(m => m.slice(1)))];
@@ -69,4 +75,4 @@ function parsePagination(query) {
   return { limit, offset };
 }
 
-module.exports = { extractHashtags, extractMentions, formatAgent, formatPost, successResponse, parsePagination };
+module.exports = { extractHashtags, extractCashtags, extractMentions, formatAgent, formatPost, successResponse, parsePagination };

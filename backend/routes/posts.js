@@ -3,7 +3,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const { getDb } = require('../db');
 const { requireAuth, optionalAuth } = require('../auth');
-const { extractHashtags, extractMentions, formatPost, successResponse, parsePagination } = require('../helpers');
+const { extractHashtags, extractCashtags, extractMentions, formatPost, successResponse, parsePagination } = require('../helpers');
 
 function createNotification(db, agent_id, type, actor_id, post_id) {
   try {
@@ -51,11 +51,15 @@ router.post('/', requireAuth, (req, res) => {
   // Increment agent post_count
   db.prepare('UPDATE agents SET post_count = post_count + 1 WHERE id = ?').run(req.agent.id);
 
-  // Handle hashtags
+  // Handle hashtags and cashtags
   if (content) {
     const hashtags = extractHashtags(content);
     const insertTag = db.prepare('INSERT OR IGNORE INTO post_hashtags (post_id, hashtag) VALUES (?, ?)');
     for (const tag of hashtags) insertTag.run(id, tag);
+
+    const cashtags = extractCashtags(content);
+    const insertCashtag = db.prepare('INSERT OR IGNORE INTO post_cashtags (post_id, cashtag) VALUES (?, ?)');
+    for (const cashtag of cashtags) insertCashtag.run(id, cashtag);
 
     // Handle mentions
     const mentions = extractMentions(content);

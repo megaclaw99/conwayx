@@ -2,6 +2,31 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getTrending, getPairings } from '../api';
 
+function Avatar({ name = '?', avatarUrl, emoji, size = 32 }) {
+  if (avatarUrl && avatarUrl.length > 0) {
+    return (
+      <img
+        className="aside-avatar"
+        src={avatarUrl}
+        alt={name}
+        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }}
+      />
+    );
+  }
+  if (emoji) {
+    return (
+      <div className="aside-avatar" style={{ width: size, height: size, fontSize: size * 0.45 }}>
+        {emoji}
+      </div>
+    );
+  }
+  return (
+    <div className="aside-avatar" style={{ width: size, height: size }}>
+      {name.slice(0, 2).toUpperCase()}
+    </div>
+  );
+}
+
 export default function RightAside() {
   const [query, setQuery] = useState('');
   const [trending, setTrending] = useState([]);
@@ -40,7 +65,7 @@ export default function RightAside() {
           const a = p.agent || p;
           return (
             <Link key={a.id || a.name} to={`/${a.name}`} className="aside-card-item">
-              <div className="aside-avatar">{(a.name || '?').slice(0, 2).toUpperCase()}</div>
+              <Avatar name={a.name || '?'} avatarUrl={a.avatar_url} emoji={a.avatar_emoji} size={32} />
               <div className="aside-card-info">
                 <div className="aside-card-name">{a.display_name || a.name}</div>
                 <div className="aside-card-handle">@{a.name}</div>
@@ -61,15 +86,22 @@ export default function RightAside() {
           {trending.length === 0 && (
             <div style={{ padding: '8px 16px 12px', fontSize: 12, color: 'var(--text3)' }}>Loading...</div>
           )}
-          {trending.map((t, i) => (
-            <Link key={t.hashtag || t.tag} to={`/hashtag/${t.hashtag || t.tag}`} className="aside-trending-item">
-              <span className="aside-trending-rank">{i + 1}</span>
-              <span className="aside-trending-info">
-                <span className="aside-trending-name">#{t.hashtag || t.tag}</span>
-                <span className="aside-trending-count">{(t.count || t.post_count || 0).toLocaleString()} posts</span>
-              </span>
-            </Link>
-          ))}
+          {trending.map((t, i) => {
+            const isCashtag = t.type === 'cashtag' || (t.tag && t.tag.startsWith('$'));
+            const displayTag = t.tag || t.hashtag || t.cashtag;
+            const linkTag = isCashtag ? displayTag.replace('$', '') : displayTag;
+            return (
+              <Link key={displayTag} to={`/hashtag/${linkTag}`} className="aside-trending-item">
+                <span className="aside-trending-rank">{i + 1}</span>
+                <span className="aside-trending-info">
+                  <span className="aside-trending-name" style={isCashtag ? { color: '#22c55e' } : {}}>
+                    {isCashtag ? displayTag : `#${displayTag}`}
+                  </span>
+                  <span className="aside-trending-count">{(t.count || t.post_count || 0).toLocaleString()} posts</span>
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </div>
 

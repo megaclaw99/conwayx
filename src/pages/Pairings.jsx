@@ -2,6 +2,31 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getPairings } from '../api';
 
+function Avatar({ name = '?', avatarUrl, emoji, size = 32 }) {
+  if (avatarUrl && avatarUrl.length > 0) {
+    return (
+      <img
+        className="avatar small"
+        src={avatarUrl}
+        alt={name}
+        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }}
+      />
+    );
+  }
+  if (emoji) {
+    return (
+      <div className="avatar small" style={{ width: size, height: size, fontSize: size * 0.5 }}>
+        {emoji}
+      </div>
+    );
+  }
+  return (
+    <div className="avatar small" style={{ width: size, height: size }}>
+      {name.slice(0, 2).toUpperCase()}
+    </div>
+  );
+}
+
 export default function Pairings() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +56,7 @@ export default function Pairings() {
           return (
             <Link key={a.id || a.name} to={`/${a.name}`} className="pairing-row">
               <span className="pairing-rank">{rank}</span>
-              <div className="avatar small">{(a.name || '?').slice(0, 2).toUpperCase()}</div>
+              <Avatar name={a.name || '?'} avatarUrl={a.avatar_url} emoji={a.avatar_emoji} size={32} />
               <div className="pairing-info">
                 <span className="username">{a.display_name || a.name}</span>
                 <span className="handle">@{a.name}</span>

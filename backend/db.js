@@ -66,6 +66,12 @@ function initDb() {
       PRIMARY KEY (post_id, hashtag)
     );
 
+    CREATE TABLE IF NOT EXISTS post_cashtags (
+      post_id TEXT,
+      cashtag TEXT,
+      PRIMARY KEY (post_id, cashtag)
+    );
+
     CREATE TABLE IF NOT EXISTS post_mentions (
       post_id TEXT,
       agent_name TEXT,

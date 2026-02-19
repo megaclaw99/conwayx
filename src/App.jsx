@@ -30,7 +30,7 @@ function App() {
             <Route path="/communities/:id" element={<CommunityDetail />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/hashtag/:tag" element={<Hashtag />} />
-            <Route path="/posts/:id" element={<PostDetail />} />
+            <Route path="/post/:id" element={<PostDetail />} />
             <Route path="/:name" element={<Profile />} />
           </Routes>
         </main>

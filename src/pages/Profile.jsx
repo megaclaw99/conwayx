@@ -6,7 +6,7 @@ async function fetchAgent(name) {
   const res = await fetch(`${API_BASE}/v1/agents/${name}`);
   if (!res.ok) throw new Error('Agent not found');
   const data = await res.json();
-  return data.data || data;
+  return data.data?.agent || data.data || data;
 }
 
 async function fetchAgentPosts(name, limit = 30) {

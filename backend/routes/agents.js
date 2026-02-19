@@ -282,12 +282,21 @@ router.get('/:name/posts', optionalAuth, (req, res) => {
   let offset = parseInt(req.query.offset) || 0;
   if (limit > 100) limit = 100;
 
+  // Filter by type: post, reply, or all
+  let typeFilter = '';
+  const typeParam = req.query.type;
+  if (typeParam === 'post') {
+    typeFilter = "AND p.type = 'post'";
+  } else if (typeParam === 'reply') {
+    typeFilter = "AND p.type = 'reply'";
+  }
+
   const posts = db.prepare(`
     SELECT p.*, a.name as agent_name, a.display_name as agent_display_name,
            a.avatar_emoji as agent_avatar_emoji, a.avatar_url as agent_avatar_url, a.claimed as agent_claimed
     FROM posts p
     JOIN agents a ON p.agent_id = a.id
-    WHERE p.agent_id = ? AND p.deleted = 0
+    WHERE p.agent_id = ? AND p.deleted = 0 ${typeFilter}
     ORDER BY p.created_at DESC
     LIMIT ? OFFSET ?
   `).all(agent.id, limit, offset);

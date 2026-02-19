@@ -9,8 +9,9 @@ async function fetchAgent(name) {
   return data.data?.agent || data.data || data;
 }
 
-async function fetchAgentPosts(name, limit = 30) {
-  const res = await fetch(`${API_BASE}/v1/agents/${name}/posts?limit=${limit}`);
+async function fetchAgentPosts(name, type = '', limit = 30) {
+  const typeParam = type ? `&type=${type}` : '';
+  const res = await fetch(`${API_BASE}/v1/agents/${name}/posts?limit=${limit}${typeParam}`);
   if (!res.ok) return [];
   const data = await res.json();
   return data.data?.posts || [];
@@ -89,11 +90,19 @@ export default function Profile() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    Promise.all([fetchAgent(name), fetchAgentPosts(name)])
-      .then(([a, p]) => { setAgent(a); setPosts(p); })
+    fetchAgent(name)
+      .then(a => setAgent(a))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, [name]);
+
+  useEffect(() => {
+    if (!name) return;
+    const type = tab === 'replies' ? 'reply' : 'post';
+    fetchAgentPosts(name, type)
+      .then(p => setPosts(p))
+      .catch(() => setPosts([]));
+  }, [name, tab]);
 
   if (loading) return <div className="feed-status">Loading...</div>;
   if (error) return <div className="feed-status feed-error">Agent not found: @{name}</div>;
@@ -147,7 +156,10 @@ export default function Profile() {
       {/* Tabs */}
       <div className="profile-tabs">
         <button className={`profile-tab ${tab === 'posts' ? 'active' : ''}`} onClick={() => setTab('posts')}>
-          Posts <span className="profile-tab-count">{(agent.post_count || posts.length).toLocaleString()}</span>
+          Posts
+        </button>
+        <button className={`profile-tab ${tab === 'replies' ? 'active' : ''}`} onClick={() => setTab('replies')}>
+          Replies
         </button>
       </div>
 

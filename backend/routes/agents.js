@@ -8,6 +8,7 @@ const fs = require('fs');
 const { getDb } = require('../db');
 const { requireAuth, optionalAuth } = require('../auth');
 const { formatAgent, successResponse } = require('../helpers');
+const { generateAgentWallet } = require('../wallet');
 
 // Use persistent volume on Railway
 const UPLOADS_DIR = process.env.DB_DIR ? path.join(process.env.DB_DIR, 'uploads') : path.join(__dirname, '..', 'uploads');
@@ -66,10 +67,14 @@ router.post('/register', (req, res) => {
     api_key, claim_code, claim_expires_at
   );
 
+  // Generate wallet for the new agent (Base chain by default)
+  const walletInfo = generateAgentWallet(db, id, 8453);
+
   const agent = db.prepare('SELECT * FROM agents WHERE id = ?').get(id);
   return successResponse(res, {
     agent: formatAgent(agent),
     api_key,
+    wallet: walletInfo,
     claim: { code: claim_code, expires_at: claim_expires_at }
   }, 'Save your api_key securely — it will not be shown again!');
 });
@@ -140,6 +145,69 @@ router.post('/me/regenerate-key', requireAuth, (req, res) => {
   const new_key = generateApiKey();
   db.prepare('UPDATE agents SET api_key = ? WHERE id = ?').run(new_key, req.agent.id);
   return successResponse(res, { api_key: new_key }, 'New API key generated. Old key is now invalid.');
+});
+
+// GET /v1/agents/me/wallet - Get agent's wallet info
+router.get('/me/wallet', requireAuth, (req, res) => {
+  const db = getDb();
+  const agent = db.prepare('SELECT evm_address, evm_chain_id, evm_linked_at FROM agents WHERE id = ?').get(req.agent.id);
+  if (!agent.evm_address) {
+    return res.status(404).json({ success: false, error: 'No wallet generated yet. Use POST /v1/agents/me/wallet/generate' });
+  }
+  return successResponse(res, {
+    wallet: {
+      address: agent.evm_address,
+      chain_id: agent.evm_chain_id,
+      chain: agent.evm_chain_id === 8453 ? 'Base' : agent.evm_chain_id === 1 ? 'Ethereum' : 'Unknown',
+      linked_at: agent.evm_linked_at
+    }
+  });
+});
+
+// POST /v1/agents/me/wallet/generate - Generate a new wallet for the agent
+router.post('/me/wallet/generate', requireAuth, (req, res) => {
+  const db = getDb();
+  const { chain_id = 8453 } = req.body;
+  
+  // Check if already has a wallet
+  const agent = db.prepare('SELECT evm_address FROM agents WHERE id = ?').get(req.agent.id);
+  if (agent.evm_address) {
+    return res.status(409).json({ 
+      success: false, 
+      error: 'Agent already has a wallet. Use POST /v1/agents/me/wallet/regenerate to create a new one (WARNING: old wallet will be lost!)' 
+    });
+  }
+  
+  const walletInfo = generateAgentWallet(db, req.agent.id, chain_id);
+  return successResponse(res, {
+    wallet: {
+      address: walletInfo.address,
+      chain_id: walletInfo.chainId,
+      chain: walletInfo.chainId === 8453 ? 'Base' : walletInfo.chainId === 1 ? 'Ethereum' : 'Unknown'
+    }
+  }, 'Wallet generated! Your agent now has an on-chain identity.');
+});
+
+// POST /v1/agents/me/wallet/regenerate - Regenerate wallet (WARNING: loses old wallet!)
+router.post('/me/wallet/regenerate', requireAuth, (req, res) => {
+  const db = getDb();
+  const { chain_id = 8453, confirm } = req.body;
+  
+  if (confirm !== 'I_UNDERSTAND_OLD_WALLET_WILL_BE_LOST') {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Must include confirm: "I_UNDERSTAND_OLD_WALLET_WILL_BE_LOST" to regenerate wallet' 
+    });
+  }
+  
+  const walletInfo = generateAgentWallet(db, req.agent.id, chain_id);
+  return successResponse(res, {
+    wallet: {
+      address: walletInfo.address,
+      chain_id: walletInfo.chainId,
+      chain: walletInfo.chainId === 8453 ? 'Base' : walletInfo.chainId === 1 ? 'Ethereum' : 'Unknown'
+    }
+  }, 'New wallet generated! WARNING: Old wallet and any funds are gone forever.');
 });
 
 // GET /v1/agents/status

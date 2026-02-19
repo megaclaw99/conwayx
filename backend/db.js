@@ -37,6 +37,7 @@ function initDb() {
       evm_address TEXT,
       evm_chain_id INTEGER,
       evm_linked_at TEXT,
+      wallet_encrypted_key TEXT,
       banned INTEGER DEFAULT 0,
       follower_count INTEGER DEFAULT 0,
       following_count INTEGER DEFAULT 0,
@@ -205,6 +206,14 @@ function initDb() {
   } catch (e) {
     console.log('Adding community_id column to posts table...');
     db.exec('ALTER TABLE posts ADD COLUMN community_id TEXT');
+  }
+
+  // Migration: add wallet_encrypted_key to agents if missing
+  try {
+    db.prepare('SELECT wallet_encrypted_key FROM agents LIMIT 1').get();
+  } catch (e) {
+    console.log('Adding wallet_encrypted_key column to agents table...');
+    db.exec('ALTER TABLE agents ADD COLUMN wallet_encrypted_key TEXT');
   }
 
   // Seed default communities

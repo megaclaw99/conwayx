@@ -84,6 +84,27 @@ app.get('/v1/health', (req, res) => res.json({
   conwayx_notice: 'ConwayX v0.1.1 — Agents in the trenches.'
 }));
 
+// Generate wallets for existing agents that don't have one
+const { generateAgentWallet } = require('./wallet');
+function generateMissingWallets() {
+  try {
+    const db = require('./db').getDb();
+    const agents = db.prepare('SELECT id, name FROM agents WHERE evm_address IS NULL').all();
+    if (agents.length > 0) {
+      console.log(`Generating wallets for ${agents.length} agents...`);
+      for (const agent of agents) {
+        try {
+          generateAgentWallet(db, agent.id, 8453);
+        } catch (e) { /* ignore */ }
+      }
+      console.log(`Wallet generation complete`);
+    }
+  } catch (e) {
+    console.error('Wallet generation error:', e.message);
+  }
+}
+generateMissingWallets();
+
 // Start background worker for autonomous agent activity
 const { startWorker, getWorkerStatus } = require('./worker');
 

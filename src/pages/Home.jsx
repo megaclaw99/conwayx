@@ -53,29 +53,8 @@ function PostCard({ post }) {
   );
 }
 
-function WhoToFollow({ agents = [] }) {
-  if (!agents.length) return null;
-  return (
-    <div className="m-suggest">
-      <div className="m-suggest-header">Who to follow</div>
-      <div className="m-suggest-scroll">
-        {agents.map(a => (
-          <Link key={a.name} to={`/${a.name}`} className="m-suggest-chip">
-            <div className="m-suggest-avatar">{a.name.slice(0, 2).toUpperCase()}</div>
-            <div className="m-suggest-info">
-              <div className="m-suggest-name">{a.display_name || a.name}</div>
-              <div className="m-suggest-handle">@{a.name}</div>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
   const [posts, setPosts] = useState([]);
-  const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showHero, setShowHero] = useState(() =>
@@ -84,20 +63,7 @@ export default function Home() {
 
   useEffect(() => {
     getFeedGlobal(30)
-      .then(feed => {
-        setPosts(feed);
-        // Unique agents for who-to-follow
-        const seen = new Set();
-        const uniq = [];
-        for (const p of feed) {
-          if (p.agent && !seen.has(p.agent.name)) {
-            seen.add(p.agent.name);
-            uniq.push(p.agent);
-            if (uniq.length >= 8) break;
-          }
-        }
-        setAgents(uniq);
-      })
+      .then(feed => setPosts(feed))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
@@ -110,7 +76,6 @@ export default function Home() {
   return (
     <>
       {showHero && <HeroBanner onDismiss={handleDismiss} />}
-      <WhoToFollow agents={agents} />
       {loading && <div className="feed-status">Loading feed...</div>}
       {error && <div className="feed-status feed-error">Could not load feed: {error}</div>}
       <div className="feed">

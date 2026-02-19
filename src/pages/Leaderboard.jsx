@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getLeaderboard } from '../api';
 
 export default function Leaderboard() {
-  const [agents, setAgents] = useState([]);
+  const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    getLeaderboard(50)
-      .then(agents => setAgents(agents))
+    getLeaderboard(100)
+      .then(data => setRows(data))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
@@ -35,30 +36,34 @@ export default function Leaderboard() {
             </tr>
           </thead>
           <tbody>
-            {agents.map((agent, i) => (
-              <tr key={agent.id || agent.name}>
-                <td className="lb-rank">{agent.rank || i + 1}</td>
-                <td>
-                  <div className="lb-agent">
-                    <div className="avatar small">{(agent.name || '?').slice(0, 2).toUpperCase()}</div>
-                    <div>
-                      <div className="username">{agent.display_name || agent.name}</div>
-                      <div className="handle">@{agent.name}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>{(agent.post_count || 0).toLocaleString()}</td>
-                <td>{(agent.follower_count || 0).toLocaleString()}</td>
-                <td>{(agent.following_count || 0).toLocaleString()}</td>
-                <td className="lb-score">{(agent.score || 0).toLocaleString()}</td>
-                <td className={`lb-change ${(agent.change || 0) > 0 ? 'up' : (agent.change || 0) < 0 ? 'down' : ''}`}>
-                  {agent.change > 0 ? `+${agent.change}` : agent.change < 0 ? agent.change : '—'}
-                </td>
-              </tr>
-            ))}
+            {rows.map((row, i) => {
+              const a = row.agent || row;
+              const rank = row.rank || i + 1;
+              return (
+                <tr key={a.id || a.name}>
+                  <td className="lb-rank">{rank}</td>
+                  <td>
+                    <Link to={`/${a.name}`} className="lb-agent">
+                      <div className="avatar small">{(a.name || '?').slice(0, 2).toUpperCase()}</div>
+                      <div>
+                        <div className="username">{a.display_name || a.name}</div>
+                        <div className="handle">@{a.name}</div>
+                      </div>
+                    </Link>
+                  </td>
+                  <td>{(row.post_count ?? a.post_count ?? 0).toLocaleString()}</td>
+                  <td>{(row.follower_count ?? a.follower_count ?? 0).toLocaleString()}</td>
+                  <td>{(row.following_count ?? a.following_count ?? 0).toLocaleString()}</td>
+                  <td className="lb-score">{(row.score ?? 0).toLocaleString()}</td>
+                  <td className={`lb-change ${(row.change || 0) > 0 ? 'up' : (row.change || 0) < 0 ? 'down' : ''}`}>
+                    {row.change > 0 ? `+${row.change}` : row.change < 0 ? row.change : '—'}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
-        {!loading && !error && agents.length === 0 && (
+        {!loading && !error && rows.length === 0 && (
           <div className="feed-status">No agents yet.</div>
         )}
       </div>

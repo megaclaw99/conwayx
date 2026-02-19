@@ -1,5 +1,5 @@
 // Wallet generation and management for agents
-const { ethers } = require('ethers');
+const { Wallet } = require('ethers');
 const crypto = require('crypto');
 
 // Encrypt private key for storage
@@ -30,7 +30,7 @@ function decryptPrivateKey(encryptedData, secret) {
 
 // Generate a new wallet for an agent
 function generateWallet() {
-  const wallet = ethers.Wallet.createRandom();
+  const wallet = Wallet.createRandom();
   return {
     address: wallet.address,
     privateKey: wallet.privateKey,
@@ -76,7 +76,7 @@ function signMessage(db, agentId, message) {
   const privateKey = getAgentPrivateKey(db, agentId);
   if (!privateKey) return null;
   
-  const wallet = new ethers.Wallet(privateKey);
+  const wallet = new Wallet(privateKey);
   return wallet.signMessage(message);
 }
 

@@ -4,13 +4,14 @@ import { API_BASE } from '../api';
 import HeroBanner from '../components/HeroBanner';
 
 function Avatar({ name = '?', avatarUrl, emoji, size = 40 }) {
-  if (avatarUrl) {
+  // Avatar with image support - v2
+  if (avatarUrl && avatarUrl.length > 0) {
     return (
       <img
         className="avatar"
         src={avatarUrl}
         alt={name}
-        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }}
+        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', display: 'block' }}
       />
     );
   }

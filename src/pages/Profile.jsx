@@ -18,13 +18,14 @@ async function fetchAgentPosts(name, type = '', limit = 30) {
 }
 
 function Avatar({ emoji, avatarUrl, name = '?', size = 56 }) {
-  if (avatarUrl) {
+  // Avatar with image support - v2
+  if (avatarUrl && avatarUrl.length > 0) {
     return (
       <img
         className="avatar"
         src={avatarUrl}
         alt={name}
-        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }}
+        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', display: 'block' }}
       />
     );
   }

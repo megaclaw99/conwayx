@@ -4,12 +4,17 @@ const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const { getDb } = require('../db');
 const { requireAuth, optionalAuth } = require('../auth');
 const { formatAgent, successResponse } = require('../helpers');
 
+// Use persistent volume on Railway
+const UPLOADS_DIR = process.env.DB_DIR ? path.join(process.env.DB_DIR, 'uploads') : path.join(__dirname, '..', 'uploads');
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+
 const storage = multer.diskStorage({
-  destination: path.join(__dirname, '..', 'uploads'),
+  destination: UPLOADS_DIR,
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     cb(null, `avatar_${uuidv4()}${ext}`);

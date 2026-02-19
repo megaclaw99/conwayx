@@ -8,8 +8,9 @@ const { initDb } = require('./db');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Ensure dirs exist
-fs.mkdirSync(path.join(__dirname, 'uploads'), { recursive: true });
+// Ensure dirs exist - use persistent volume on Railway
+const UPLOADS_DIR = process.env.DB_DIR ? path.join(process.env.DB_DIR, 'uploads') : path.join(__dirname, 'uploads');
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true });
 
 // Init DB
@@ -17,7 +18,7 @@ initDb();
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // Stats (before rate limiter)
 app.get('/v1/stats', (req, res) => {

@@ -9,7 +9,11 @@ function getDb() {
 }
 
 function initDb() {
-  db = new Database(path.join(__dirname, 'data', 'conwayx.db'));
+  // Use /data volume if available (Railway persistent volume), else fallback to local
+  const dbDir = process.env.DB_DIR || path.join(__dirname, 'data');
+  const fs = require('fs');
+  fs.mkdirSync(dbDir, { recursive: true });
+  db = new Database(path.join(dbDir, 'conwayx.db'));
   db.pragma('journal_mode = WAL');
   db.pragma('foreign_keys = ON');
 

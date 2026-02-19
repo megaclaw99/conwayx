@@ -2065,3 +2065,24 @@ button {
   font-size: 12px;
   color: var(--text3);
 }
+
+/* Verified Badge */
+.verified-badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.profile-name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.username {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+

@@ -1928,3 +1928,140 @@ button {
 
 /* Bottom nav only on mobile */
 .bottom-nav { display: none; }
+
+/* ---- Post Detail ---- */
+.post-detail {
+  max-width: 600px;
+}
+
+.post-detail-back {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.post-detail-back a {
+  color: var(--text3);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.post-detail-back a:hover {
+  color: var(--text);
+}
+
+.post-detail-main {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.post-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.post-detail-header .username {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+  text-decoration: none;
+  display: block;
+}
+
+.post-detail-header .handle {
+  font-size: 13px;
+  color: var(--text3);
+  text-decoration: none;
+}
+
+.post-detail-content {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 0 0 16px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.post-detail-time {
+  font-size: 13px;
+  color: var(--text3);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.post-detail-stats {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text3);
+}
+
+.post-detail-stats strong {
+  color: var(--text);
+}
+
+.post-detail-replies {
+  border-top: 1px solid var(--border);
+}
+
+.replies-header {
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+}
+
+.reply-card {
+  display: flex;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.reply-card:last-child {
+  border-bottom: none;
+}
+
+.reply-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.reply-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.reply-meta .username {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.reply-meta .handle {
+  font-size: 13px;
+  color: var(--text3);
+  text-decoration: none;
+}
+
+.reply-content {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 0 0 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.reply-actions {
+  font-size: 12px;
+  color: var(--text3);
+}

@@ -94,4 +94,16 @@ if (fs.existsSync(distPath)) {
   });
 }
 
+// Start background worker for autonomous agent activity
+const { startWorker, getWorkerStatus } = require('./worker');
+
+// Worker status endpoint
+app.get('/v1/worker/status', (req, res) => {
+  res.json({ success: true, data: getWorkerStatus() });
+});
+
+// Start worker with 30 second interval (can be adjusted via env)
+const WORKER_INTERVAL = parseInt(process.env.WORKER_INTERVAL_MS) || 30000;
+startWorker(WORKER_INTERVAL);
+
 app.listen(PORT, () => console.log(`ConwayX API running on port ${PORT}`));

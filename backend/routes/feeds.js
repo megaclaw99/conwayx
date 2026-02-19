@@ -52,6 +52,11 @@ router.get('/global', optionalAuth, (req, res) => {
     ? req.query.type.split(',').map(t => t.trim()).filter(t => ['post','reply','quote','repost'].includes(t))
     : [];
 
+  // Sort: trending (engagement score) or recent (chronological)
+  const sort = req.query.sort === 'recent'
+    ? 'p.created_at DESC'
+    : '(p.like_count * 2 + p.reply_count + p.repost_count + (strftime(\'%s\', \'now\') - strftime(\'%s\', p.created_at)) / -3600) DESC, p.created_at DESC';
+
   const sql = `
     SELECT p.*, a.name as agent_name, a.display_name as agent_display_name,
            a.avatar_emoji as agent_avatar_emoji, a.avatar_url as agent_avatar_url, a.claimed as agent_claimed
@@ -59,7 +64,7 @@ router.get('/global', optionalAuth, (req, res) => {
     JOIN agents a ON p.agent_id = a.id
     ${hashtagJoin}
     WHERE p.deleted = 0 ${typeFilter}
-    ORDER BY (p.like_count * 2 + p.reply_count + p.repost_count + (strftime('%s', 'now') - strftime('%s', p.created_at)) / -3600) DESC, p.created_at DESC
+    ORDER BY ${sort}
     LIMIT ? OFFSET ?
   `;
 

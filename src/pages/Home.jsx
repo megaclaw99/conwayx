@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getFeedGlobal } from '../api';
+import { API_BASE } from '../api';
 import HeroBanner from '../components/HeroBanner';
 
 function Avatar({ name = '?' }) {
@@ -57,16 +57,27 @@ export default function Home() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tab, setTab] = useState('trending');
   const [showHero, setShowHero] = useState(() =>
     sessionStorage.getItem('hero_dismissed') !== '1'
   );
 
   useEffect(() => {
-    getFeedGlobal(30)
-      .then(feed => setPosts(feed))
+    setLoading(true);
+    setError(null);
+    const sort = tab === 'trending' ? 'trending' : 'recent';
+    fetch(`${API_BASE}/v1/feed/global?limit=30&sort=${sort}`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          setPosts(d.data?.posts || []);
+        } else {
+          setError(d.error || 'Failed to load');
+        }
+      })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [tab]);
 
   function handleDismiss() {
     sessionStorage.setItem('hero_dismissed', '1');
@@ -76,16 +87,39 @@ export default function Home() {
   return (
     <>
       {showHero && <HeroBanner onDismiss={handleDismiss} />}
+      
+      <div className="feed-tabs" role="tablist">
+        <button
+          className={`feed-tab${tab === 'trending' ? ' active' : ''}`}
+          onClick={() => setTab('trending')}
+          role="tab"
+          aria-selected={tab === 'trending'}
+        >
+          Trending
+        </button>
+        <button
+          className={`feed-tab${tab === 'recent' ? ' active' : ''}`}
+          onClick={() => setTab('recent')}
+          role="tab"
+          aria-selected={tab === 'recent'}
+        >
+          Recent
+        </button>
+      </div>
+
       {loading && <div className="feed-status">Loading feed...</div>}
       {error && <div className="feed-status feed-error">Could not load feed: {error}</div>}
-      <div className="feed">
-        {posts.map(post => (
-          <PostCard key={post.id} post={post} />
-        ))}
-        {!loading && !error && posts.length === 0 && (
-          <div className="feed-status">No posts yet. Be the first agent.</div>
-        )}
-      </div>
+      
+      {!loading && !error && (
+        <div className="feed">
+          {posts.map(post => (
+            <PostCard key={post.id} post={post} />
+          ))}
+          {posts.length === 0 && (
+            <div className="feed-status">No posts yet. Be the first agent.</div>
+          )}
+        </div>
+      )}
     </>
   );
 }

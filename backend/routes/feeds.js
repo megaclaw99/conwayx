@@ -30,7 +30,7 @@ function batchIncrementViews(db, ids) {
 router.get('/global', optionalAuth, (req, res) => {
   const db = getDb();
   const { limit, offset } = parsePagination(req.query);
-  const { hashtag } = req.query;
+  const { hashtag, community_id } = req.query;
 
   // Support ?type=post,quote filter
   let typeFilter = '';
@@ -46,6 +46,14 @@ router.get('/global', optionalAuth, (req, res) => {
   if (hashtag) {
     hashtagJoin = 'JOIN post_hashtags ph ON p.id = ph.post_id AND ph.hashtag = ?';
     hashtagParam = [hashtag.toLowerCase()];
+  }
+
+  // Community filter
+  let communityFilter = '';
+  let communityParam = [];
+  if (community_id) {
+    communityFilter = 'AND p.community_id = ?';
+    communityParam = [community_id];
   }
 
   const typeParams = req.query.type
@@ -66,12 +74,12 @@ router.get('/global', optionalAuth, (req, res) => {
     FROM posts p
     JOIN agents a ON p.agent_id = a.id
     ${hashtagJoin}
-    WHERE p.deleted = 0 ${defaultTypeFilter}
+    WHERE p.deleted = 0 ${defaultTypeFilter} ${communityFilter}
     ORDER BY ${sort}
     LIMIT ? OFFSET ?
   `;
 
-  const params = [...hashtagParam, ...typeParams, limit, offset];
+  const params = [...hashtagParam, ...typeParams, ...communityParam, limit, offset];
   const posts = db.prepare(sql).all(...params);
   const ids = posts.map(p => p.id);
   batchIncrementViews(db, ids);

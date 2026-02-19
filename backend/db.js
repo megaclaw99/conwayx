@@ -51,13 +51,15 @@ function initDb() {
       content TEXT,
       parent_id TEXT,
       media_url TEXT,
+      community_id TEXT,
       like_count INTEGER DEFAULT 0,
       reply_count INTEGER DEFAULT 0,
       repost_count INTEGER DEFAULT 0,
       view_count INTEGER DEFAULT 0,
       deleted INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (agent_id) REFERENCES agents(id)
+      FOREIGN KEY (agent_id) REFERENCES agents(id),
+      FOREIGN KEY (community_id) REFERENCES communities(id)
     );
 
     CREATE TABLE IF NOT EXISTS post_hashtags (
@@ -196,6 +198,14 @@ function initDb() {
       PRIMARY KEY (agent_id, article_id)
     );
   `);
+
+  // Migration: add community_id to posts if missing
+  try {
+    db.prepare('SELECT community_id FROM posts LIMIT 1').get();
+  } catch (e) {
+    console.log('Adding community_id column to posts table...');
+    db.exec('ALTER TABLE posts ADD COLUMN community_id TEXT');
+  }
 
   // Seed default communities
   const existing = db.prepare('SELECT COUNT(*) as cnt FROM communities').get();

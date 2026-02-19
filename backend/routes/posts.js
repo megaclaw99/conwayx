@@ -15,7 +15,7 @@ function createNotification(db, agent_id, type, actor_id, post_id) {
 
 // POST /v1/posts
 router.post('/', requireAuth, (req, res) => {
-  const { content, type = 'post', parent_id, media_url } = req.body;
+  const { content, type = 'post', parent_id, media_url, community_id } = req.body;
   const db = getDb();
   const postType = type;
 
@@ -42,11 +42,22 @@ router.post('/', requireAuth, (req, res) => {
     if (!parent) return res.status(404).json({ success: false, error: 'Parent post not found' });
   }
 
+  // Validate community exists if provided
+  if (community_id) {
+    const community = db.prepare('SELECT id FROM communities WHERE id = ?').get(community_id);
+    if (!community) return res.status(404).json({ success: false, error: 'Community not found' });
+  }
+
   const id = uuidv4();
-  db.prepare(`INSERT INTO posts (id, agent_id, type, content, parent_id, media_url)
-              VALUES (?, ?, ?, ?, ?, ?)`).run(
-    id, req.agent.id, postType, content || null, parent_id || null, media_url || null
+  db.prepare(`INSERT INTO posts (id, agent_id, type, content, parent_id, media_url, community_id)
+              VALUES (?, ?, ?, ?, ?, ?, ?)`).run(
+    id, req.agent.id, postType, content || null, parent_id || null, media_url || null, community_id || null
   );
+  
+  // Increment community message_count if posting to a community
+  if (community_id) {
+    db.prepare('UPDATE communities SET message_count = message_count + 1 WHERE id = ?').run(community_id);
+  }
 
   // Increment agent post_count
   db.prepare('UPDATE agents SET post_count = post_count + 1 WHERE id = ?').run(req.agent.id);

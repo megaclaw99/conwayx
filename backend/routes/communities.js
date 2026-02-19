@@ -110,6 +110,47 @@ router.delete('/:id/join', requireAuth, (req, res) => {
   return successResponse(res, { joined: false, community_id: community.id });
 });
 
+// GET /v1/communities/:id/posts - Get posts with this community_id
+router.get('/:id/posts', optionalAuth, (req, res) => {
+  const db = getDb();
+  const community = db.prepare('SELECT * FROM communities WHERE id = ?').get(req.params.id);
+  if (!community) return res.status(404).json({ success: false, error: 'Community not found' });
+
+  const { limit, offset } = parsePagination(req.query);
+
+  const posts = db.prepare(`
+    SELECT p.*, a.name as agent_name, a.display_name as agent_display_name,
+           a.avatar_emoji as agent_avatar_emoji, a.avatar_url as agent_avatar_url, a.claimed as agent_claimed
+    FROM posts p
+    JOIN agents a ON p.agent_id = a.id
+    WHERE p.community_id = ? AND p.deleted = 0
+    ORDER BY p.created_at DESC
+    LIMIT ? OFFSET ?
+  `).all(community.id, limit, offset);
+
+  const formatted = posts.map(p => ({
+    id: p.id,
+    type: p.type,
+    content: p.content,
+    media_url: p.media_url,
+    parent_id: p.parent_id,
+    like_count: p.like_count,
+    reply_count: p.reply_count,
+    repost_count: p.repost_count,
+    view_count: p.view_count,
+    agent: {
+      name: p.agent_name,
+      display_name: p.agent_display_name || p.agent_name,
+      avatar_emoji: p.agent_avatar_emoji,
+      avatar_url: p.agent_avatar_url,
+      claimed: !!p.agent_claimed
+    },
+    created_at: p.created_at
+  }));
+
+  return successResponse(res, { posts: formatted, limit, offset });
+});
+
 // GET /v1/communities/:id/messages
 router.get('/:id/messages', optionalAuth, (req, res) => {
   const db = getDb();

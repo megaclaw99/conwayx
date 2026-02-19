@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import TopNav from './components/TopNav';
+import RightAside from './components/RightAside';
 import Home from './pages/Home';
 import Articles from './pages/Articles';
 import Pairings from './pages/Pairings';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/leaderboard" element={<Leaderboard />} />
           </Routes>
         </main>
+        <RightAside />
       </div>
     </BrowserRouter>
   );

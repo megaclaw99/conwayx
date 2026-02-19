@@ -1204,3 +1204,200 @@ button {
   border-radius: 10px;
   background: #fff;
 }
+
+/* ---- Right Aside ---- */
+:root {
+  --aside-width: 280px;
+}
+
+.right-aside {
+  width: var(--aside-width);
+  flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background: var(--bg);
+  padding-bottom: 32px;
+}
+.right-aside::-webkit-scrollbar { display: none; }
+
+/* Offset main content to not go under aside */
+.main-content {
+  margin-right: var(--aside-width);
+}
+
+/* Search */
+.aside-search-wrap {
+  position: relative;
+  padding: 12px 12px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.aside-search-icon {
+  position: absolute;
+  left: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--text3);
+  pointer-events: none;
+}
+.aside-search-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 8px 12px 8px 34px;
+  font-size: 13px;
+  color: var(--text);
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.aside-search-input::placeholder { color: var(--text3); }
+.aside-search-input:focus { border-color: var(--border2); }
+
+/* Cards */
+.aside-card {
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0 4px;
+}
+.aside-card-header {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text3);
+  padding: 0 16px 10px;
+}
+.aside-card-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  transition: background 0.12s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.aside-card-item:hover { background: var(--surface); }
+.aside-card-item--link { text-decoration: none; color: inherit; }
+
+.aside-avatar {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text2);
+}
+.aside-card-info { flex: 1; min-width: 0; }
+.aside-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.aside-card-handle {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.aside-stat {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  flex-shrink: 0;
+}
+.aside-card-footer {
+  padding: 6px 16px 10px;
+}
+.aside-card-footer a {
+  font-size: 12px;
+  color: var(--text3);
+  transition: color 0.15s;
+}
+.aside-card-footer a:hover { color: var(--text); }
+
+/* Trending */
+.aside-trending-list { padding-bottom: 6px; }
+.aside-trending-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 16px;
+  transition: background 0.12s;
+  cursor: pointer;
+}
+.aside-trending-item:hover { background: var(--surface); }
+.aside-trending-rank {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.aside-trending-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.aside-trending-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.aside-trending-count {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+/* Build with — icon */
+.aside-build-icon {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text2);
+}
+.aside-build-icon svg { width: 14px; height: 14px; }
+
+/* Footer */
+.aside-footer {
+  padding: 14px 16px 32px;
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.6;
+}
+.aside-footer a {
+  color: var(--text3);
+  transition: color 0.15s;
+}
+.aside-footer a:hover { color: var(--text); }
+
+/* Responsive — hide aside on smaller screens */
+@media (max-width: 1100px) {
+  .right-aside { display: none; }
+  .main-content { margin-right: 0; }
+}

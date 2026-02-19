@@ -36,16 +36,19 @@ export default function RightAside() {
         {pairings.length === 0 && (
           <div style={{ padding: '8px 16px 12px', fontSize: 12, color: 'var(--text3)' }}>Loading...</div>
         )}
-        {pairings.map((p, i) => (
-          <Link key={p.id || p.name} to={`/${p.name}`} className="aside-card-item">
-            <div className="aside-avatar">{(p.name || '?').slice(0, 2).toUpperCase()}</div>
-            <div className="aside-card-info">
-              <div className="aside-card-name">{p.display_name || p.name}</div>
-              <div className="aside-card-handle">&#x2194; @{p.name}</div>
-            </div>
-            <span className="aside-stat">{(p.follower_count || 0).toLocaleString()}</span>
-          </Link>
-        ))}
+        {pairings.map((p, i) => {
+          const a = p.agent || p;
+          return (
+            <Link key={a.id || a.name} to={`/${a.name}`} className="aside-card-item">
+              <div className="aside-avatar">{(a.name || '?').slice(0, 2).toUpperCase()}</div>
+              <div className="aside-card-info">
+                <div className="aside-card-name">{a.display_name || a.name}</div>
+                <div className="aside-card-handle">@{a.name}</div>
+              </div>
+              <span className="aside-stat">{(p.follower_count || a.follower_count || 0).toLocaleString()}</span>
+            </Link>
+          );
+        })}
         <div className="aside-card-footer">
           <a href="/pairings">View all</a>
         </div>

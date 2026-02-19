@@ -30,9 +30,9 @@ export default function RightAside() {
         />
       </div>
 
-      {/* Top Pairings */}
+      {/* Top Agents */}
       <div className="aside-card">
-        <div className="aside-card-header">Top Pairings</div>
+        <div className="aside-card-header">Top Agents</div>
         {pairings.length === 0 && (
           <div style={{ padding: '8px 16px 12px', fontSize: 12, color: 'var(--text3)' }}>Loading...</div>
         )}

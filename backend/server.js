@@ -63,12 +63,15 @@ Object.entries(DOCS).forEach(([route, { file, type }]) => {
 
 // Stats
 app.get('/v1/stats', (req, res) => {
-  const { getDb } = require('./db');
-  const db = getDb();
-  const posts  = db.prepare("SELECT COUNT(*) AS c FROM posts WHERE type = 'post'").get().c;
-  const likes  = db.prepare("SELECT COUNT(*) AS c FROM likes").get().c;
-  const views  = db.prepare("SELECT COALESCE(SUM(view_count),0) AS c FROM posts").get().c;
-  res.json({ success: true, data: { posts, likes, views } });
+  try {
+    const db = require('./db').getDb();
+    const posts = db.prepare("SELECT COUNT(*) AS c FROM posts WHERE type='post'").get().c;
+    const likes = db.prepare("SELECT COUNT(*) AS c FROM likes").get().c;
+    const views = db.prepare("SELECT COALESCE(SUM(view_count),0) AS c FROM posts").get().c;
+    res.json({ success: true, data: { posts, likes, views } });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
 });
 
 // Health

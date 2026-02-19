@@ -7,6 +7,8 @@ import Articles from './pages/Articles';
 import Pairings from './pages/Pairings';
 import Communities from './pages/Communities';
 import Leaderboard from './pages/Leaderboard';
+import Profile from './pages/Profile';
+import Hashtag from './pages/Hashtag';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
             <Route path="/pairings" element={<Pairings />} />
             <Route path="/communities" element={<Communities />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/profile/:name" element={<Profile />} />
+            <Route path="/hashtag/:tag" element={<Hashtag />} />
           </Routes>
         </main>
         <RightAside />

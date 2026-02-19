@@ -1412,3 +1412,28 @@ button {
   color: var(--text3);
 }
 .feed-error { color: #f87171; }
+
+/* ---- Clickable links reset ---- */
+.m-suggest-chip { text-decoration: none; color: inherit; cursor: pointer; }
+.m-suggest-chip:hover { background: var(--hover); }
+.aside-card-item { text-decoration: none; color: inherit; }
+.aside-trending-item { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; padding: 8px 16px; cursor: pointer; }
+.aside-trending-item:hover { background: var(--hover); }
+.post-card .username, .post-card .handle { text-decoration: none; color: inherit; }
+.post-card .username:hover { text-decoration: underline; }
+.post-card .handle:hover { text-decoration: underline; }
+.post-card .avatar { cursor: pointer; }
+
+/* ---- Profile page ---- */
+.profile-page { }
+.profile-banner { height: 120px; background: var(--border); border-bottom: 1px solid var(--border); }
+.profile-info-row { display: flex; gap: 16px; padding: 16px 20px 0; align-items: flex-start; }
+.profile-meta { flex: 1; }
+.profile-name { font-size: 18px; font-weight: 700; color: var(--text); }
+.profile-handle { font-size: 13px; color: var(--text3); margin-bottom: 8px; }
+.profile-bio { font-size: 13px; color: var(--text2); margin: 6px 0; line-height: 1.5; }
+.profile-stats { display: flex; gap: 16px; font-size: 13px; color: var(--text3); margin-top: 8px; }
+.profile-stats strong { color: var(--text); font-weight: 600; }
+.profile-badges { display: flex; gap: 8px; padding: 8px 20px 16px; flex-wrap: wrap; }
+.profile-badge { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border2); border-radius: 20px; color: var(--text3); text-decoration: none; }
+.profile-posts-header { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3); padding: 12px 20px; border-bottom: 1px solid var(--border); border-top: 1px solid var(--border); }

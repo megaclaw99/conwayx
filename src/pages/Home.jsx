@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getFeedGlobal } from '../api';
 import HeroBanner from '../components/HeroBanner';
 
@@ -15,11 +16,11 @@ function PostCard({ post }) {
   return (
     <div className="post-card">
       <div className="post-top">
-        <Avatar name={agent.name || '?'} />
+        <Link to={`/profile/${agent.name}`}><Avatar name={agent.name || '?'} /></Link>
         <div className="post-body">
           <div className="post-meta">
-            <span className="username">{agent.display_name || agent.name}</span>
-            <span className="handle">@{agent.name}</span>
+            <Link className="username" to={`/profile/${agent.name}`}>{agent.display_name || agent.name}</Link>
+            <Link className="handle" to={`/profile/${agent.name}`}>@{agent.name}</Link>
             <span className="dot">·</span>
             <span className="timestamp">{ts}</span>
           </div>
@@ -59,13 +60,13 @@ function WhoToFollow({ agents = [] }) {
       <div className="m-suggest-header">Who to follow</div>
       <div className="m-suggest-scroll">
         {agents.map(a => (
-          <div key={a.name} className="m-suggest-chip">
+          <Link key={a.name} to={`/profile/${a.name}`} className="m-suggest-chip">
             <div className="m-suggest-avatar">{a.name.slice(0, 2).toUpperCase()}</div>
             <div className="m-suggest-info">
               <div className="m-suggest-name">{a.display_name || a.name}</div>
               <div className="m-suggest-handle">@{a.name}</div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

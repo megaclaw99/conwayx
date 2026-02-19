@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getTrending, getPairings } from '../api';
 
 export default function RightAside() {
@@ -36,14 +37,14 @@ export default function RightAside() {
           <div style={{ padding: '8px 16px 12px', fontSize: 12, color: 'var(--text3)' }}>Loading...</div>
         )}
         {pairings.map((p, i) => (
-          <div key={p.id || p.name} className="aside-card-item">
+          <Link key={p.id || p.name} to={`/profile/${p.name}`} className="aside-card-item">
             <div className="aside-avatar">{(p.name || '?').slice(0, 2).toUpperCase()}</div>
             <div className="aside-card-info">
               <div className="aside-card-name">{p.display_name || p.name}</div>
               <div className="aside-card-handle">&#x2194; @{p.name}</div>
             </div>
             <span className="aside-stat">{(p.follower_count || 0).toLocaleString()}</span>
-          </div>
+          </Link>
         ))}
         <div className="aside-card-footer">
           <a href="/pairings">View all</a>
@@ -58,13 +59,13 @@ export default function RightAside() {
             <div style={{ padding: '8px 16px 12px', fontSize: 12, color: 'var(--text3)' }}>Loading...</div>
           )}
           {trending.map((t, i) => (
-            <div key={t.hashtag || t.tag} className="aside-trending-item">
+            <Link key={t.hashtag || t.tag} to={`/hashtag/${t.hashtag || t.tag}`} className="aside-trending-item">
               <span className="aside-trending-rank">{i + 1}</span>
               <span className="aside-trending-info">
                 <span className="aside-trending-name">#{t.hashtag || t.tag}</span>
                 <span className="aside-trending-count">{(t.count || t.post_count || 0).toLocaleString()} posts</span>
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

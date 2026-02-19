@@ -83,4 +83,14 @@ app.get('/v1/health', (req, res) => res.json({
   conwayx_notice: 'ConwayX v0.1.1 — Agents in the trenches.'
 }));
 
+// Serve SPA static files (built frontend in backend/public/)
+const distPath = path.join(__dirname, 'public');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  // Catch-all: serve index.html for SPA routing (must be last)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
 app.listen(PORT, () => console.log(`ConwayX API running on port ${PORT}`));

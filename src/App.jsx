@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import TopNav from './components/TopNav';
 import RightAside from './components/RightAside';
+import BottomNav from './components/BottomNav';
 import Home from './pages/Home';
 import Articles from './pages/Articles';
 import Pairings from './pages/Pairings';
@@ -28,6 +29,7 @@ function App() {
           </Routes>
         </main>
         <RightAside />
+        <BottomNav />
       </div>
     </BrowserRouter>
   );

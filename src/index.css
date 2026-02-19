@@ -1446,3 +1446,99 @@ button {
 .profile-tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 600; }
 .profile-tab-count { font-size: 12px; color: var(--text3); margin-left: 4px; }
 .profile-posts-header { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3); padding: 12px 20px; border-bottom: 1px solid var(--border); border-top: 1px solid var(--border); }
+
+/* ==============================
+   MOBILE OPTIMIZATIONS
+   ============================== */
+
+@media (max-width: 768px) {
+
+  /* App layout full width */
+  .app-layout { display: block; }
+  .main-content { margin-left: 0 !important; padding-top: 52px; padding-bottom: 72px; }
+
+  /* TopNav: show logo + scrollable links */
+  .top-nav { display: flex; }
+  .top-nav-logo { font-size: 15px; }
+  .top-nav-links { gap: 0; }
+  .top-nav-links a { font-size: 11px; padding: 6px 8px; }
+
+  /* Bottom nav bar for mobile */
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 300;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    height: 60px;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+  }
+  .bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    color: var(--text3);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 8px;
+    min-width: 52px;
+    transition: color 0.15s;
+    text-decoration: none;
+  }
+  .bottom-nav a.active, .bottom-nav a:hover { color: var(--text); }
+  .bottom-nav svg { width: 22px; height: 22px; }
+
+  /* Hero tighter */
+  .hero { padding: 20px 14px 14px; }
+  .hero-title { font-size: 20px; }
+  .hero-tagline { font-size: 13px; }
+  .hero-card { padding: 14px; }
+  .hero-stats { gap: 16px; margin-top: 14px; }
+  .hero-stat-value { font-size: 15px; }
+  .hero-stat-label { font-size: 10px; }
+
+  /* Feed cards */
+  .post-card { padding: 12px 14px; }
+  .avatar { width: 34px; height: 34px; font-size: 12px; }
+  .post-body { gap: 4px; }
+  .content { font-size: 14px; line-height: 1.5; }
+  .post-meta { font-size: 12px; gap: 4px; flex-wrap: wrap; }
+  .post-actions { gap: 18px; padding-top: 8px; }
+  .post-action-btn { font-size: 12px; gap: 4px; }
+
+  /* Who to follow */
+  .m-suggest { padding: 12px 14px; }
+  .m-suggest-scroll { gap: 8px; }
+  .m-suggest-chip { min-width: 130px; padding: 10px 12px; }
+
+  /* Profile page */
+  .profile-banner { height: 90px; }
+  .profile-header { margin-top: -28px; padding: 0 14px; }
+  .profile-info { padding: 10px 14px 0; }
+  .profile-name { font-size: 16px; }
+  .profile-stats { gap: 14px; font-size: 13px; }
+  .profile-tabs { overflow-x: auto; }
+  .profile-tab { padding: 10px 16px; font-size: 13px; white-space: nowrap; }
+
+  /* Leaderboard */
+  .leaderboard-table th:nth-child(3),
+  .leaderboard-table td:nth-child(3) { display: none; }
+
+  /* Articles */
+  .article-card { padding: 14px; }
+  .article-title { font-size: 15px; }
+
+  /* Communities */
+  .community-card { padding: 14px; }
+
+  /* Right aside hidden */
+  .right-aside { display: none !important; }
+}
+
+/* Bottom nav only on mobile */
+.bottom-nav { display: none; }

@@ -219,6 +219,24 @@ function initDb() {
     console.log('Seeded 10 default communities');
   }
 
+  // Backfill cashtags from existing posts (runs once on startup)
+  const cashtagCount = db.prepare('SELECT COUNT(*) as cnt FROM post_cashtags').get().cnt;
+  if (cashtagCount === 0) {
+    console.log('Backfilling cashtags from existing posts...');
+    const posts = db.prepare('SELECT id, content FROM posts WHERE content IS NOT NULL AND deleted = 0').all();
+    const insertCashtag = db.prepare('INSERT OR IGNORE INTO post_cashtags (post_id, cashtag) VALUES (?, ?)');
+    let count = 0;
+    for (const post of posts) {
+      const matches = post.content.match(/\$[A-Za-z][A-Za-z0-9]*/g) || [];
+      const cashtags = [...new Set(matches.map(c => c.toUpperCase()))];
+      for (const cashtag of cashtags) {
+        insertCashtag.run(post.id, cashtag);
+        count++;
+      }
+    }
+    console.log(`Backfilled ${count} cashtag entries`);
+  }
+
   console.log('Database initialized');
   return db;
 }

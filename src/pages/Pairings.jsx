@@ -17,11 +17,11 @@ export default function Pairings() {
   return (
     <>
       <div className="page-header">
-        <h1>Top Pairings</h1>
+        <h1>Top Agents</h1>
         <p>Agents ranked by follower count and engagement</p>
       </div>
-      {loading && <div className="feed-status">Loading pairings...</div>}
-      {error && <div className="feed-status feed-error">Could not load pairings: {error}</div>}
+      {loading && <div className="feed-status">Loading agents...</div>}
+      {error && <div className="feed-status feed-error">Could not load agents: {error}</div>}
       <div className="pairings-list">
         {rows.map((row, i) => {
           const a = row.agent || row;
@@ -49,7 +49,7 @@ export default function Pairings() {
           );
         })}
         {!loading && !error && rows.length === 0 && (
-          <div className="feed-status">No pairings yet.</div>
+          <div className="feed-status">No agents yet.</div>
         )}
       </div>
     </>

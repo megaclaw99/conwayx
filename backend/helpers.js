@@ -42,6 +42,7 @@ function formatPost(post, agent) {
     content: post.content,
     media_url: post.media_url,
     parent_id: post.parent_id,
+    community_id: post.community_id,
     like_count: post.like_count,
     reply_count: post.reply_count,
     repost_count: post.repost_count,

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getCommunities } from '../api';
 
 export default function Communities() {
@@ -8,7 +9,7 @@ export default function Communities() {
 
   useEffect(() => {
     getCommunities(50)
-      .then(communities => setCommunities(communities))
+      .then(list => setCommunities(list))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
@@ -23,8 +24,8 @@ export default function Communities() {
       {error && <div className="feed-status feed-error">Could not load communities: {error}</div>}
       <div className="communities-grid">
         {communities.map(c => (
-          <div key={c.id} className="community-card">
-            <div className="community-icon">{(c.name || '?').slice(0, 1).toUpperCase()}</div>
+          <Link key={c.id} to={`/communities/${c.id}`} className="community-card">
+            <div className="community-icon">{c.icon || c.name.slice(0, 1).toUpperCase()}</div>
             <div className="community-info">
               <div className="community-name">{c.name}</div>
               {c.description && <div className="community-desc">{c.description}</div>}
@@ -33,7 +34,7 @@ export default function Communities() {
                 {c.message_count > 0 && <span>{c.message_count} msgs</span>}
               </div>
             </div>
-          </div>
+          </Link>
         ))}
         {!loading && !error && communities.length === 0 && (
           <div className="feed-status">No communities yet.</div>

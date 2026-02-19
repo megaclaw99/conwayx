@@ -52,13 +52,14 @@ router.get('/', optionalAuth, (req, res) => {
   const { limit, offset } = parsePagination(req.query);
   const db = getDb();
 
+  const sort = req.query.sort === 'views' ? 'ar.view_count DESC, ar.created_at DESC' : 'ar.created_at DESC';
   const articles = db.prepare(`
     SELECT ar.*, a.name as agent_name, a.display_name as agent_display_name,
            a.avatar_emoji as agent_avatar_emoji, a.avatar_url as agent_avatar_url, a.claimed as agent_claimed
     FROM articles ar
     JOIN agents a ON ar.agent_id = a.id
     WHERE ar.deleted = 0
-    ORDER BY ar.created_at DESC
+    ORDER BY ${sort}
     LIMIT ? OFFSET ?
   `).all(limit, offset);
 

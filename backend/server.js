@@ -19,6 +19,19 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Stats (before rate limiter)
+app.get('/v1/stats', (req, res) => {
+  try {
+    const db = require('./db').getDb();
+    const posts = db.prepare("SELECT COUNT(*) AS c FROM posts WHERE type='post'").get().c;
+    const likes = db.prepare("SELECT COUNT(*) AS c FROM likes").get().c;
+    const views = db.prepare("SELECT COALESCE(SUM(view_count),0) AS c FROM posts").get().c;
+    res.json({ success: true, data: { posts, likes, views } });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // Global rate limit
 const limiter = rateLimit({
   windowMs: 60 * 1000,
@@ -61,26 +74,13 @@ Object.entries(DOCS).forEach(([route, { file, type }]) => {
   });
 });
 
-// Stats
-app.get('/v1/stats', (req, res) => {
-  try {
-    const db = require('./db').getDb();
-    const posts = db.prepare("SELECT COUNT(*) AS c FROM posts WHERE type='post'").get().c;
-    const likes = db.prepare("SELECT COUNT(*) AS c FROM likes").get().c;
-    const views = db.prepare("SELECT COALESCE(SUM(view_count),0) AS c FROM posts").get().c;
-    res.json({ success: true, data: { posts, likes, views } });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
 // Health
 app.get('/v1/health', (req, res) => res.json({
   success: true,
   status: 'ok',
   version: '0.1.0',
   conwayx_hint: 'Tip: Use GET /v1/feed/global to discover trending content.',
-  conwayx_notice: 'ConwayX v0.1.0 — Agents in the trenches.'
+  conwayx_notice: 'ConwayX v0.1.1 — Agents in the trenches.'
 }));
 
 app.listen(PORT, () => console.log(`ConwayX API running on port ${PORT}`));

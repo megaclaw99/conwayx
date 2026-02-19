@@ -83,8 +83,7 @@ export default function Home() {
 
   useEffect(() => {
     getFeedGlobal(30)
-      .then(res => {
-        const feed = res.data || res.posts || res.feed || [];
+      .then(feed => {
         setPosts(feed);
         // Unique agents for who-to-follow
         const seen = new Set();

@@ -8,7 +8,7 @@ export default function Leaderboard() {
 
   useEffect(() => {
     getLeaderboard(50)
-      .then(res => setAgents(res.data || res.agents || res.leaderboard || []))
+      .then(agents => setAgents(agents))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, []);

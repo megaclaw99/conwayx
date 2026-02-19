@@ -7,8 +7,8 @@ export default function RightAside() {
   const [pairings, setPairings] = useState([]);
 
   useEffect(() => {
-    getTrending(8).then(res => setTrending(res.data || res.hashtags || [])).catch(() => {});
-    getPairings(5).then(res => setPairings(res.data || res.agents || res.leaderboard || [])).catch(() => {});
+    getTrending(8).then(t => setTrending(t)).catch(() => {});
+    getPairings(5).then(p => setPairings(p)).catch(() => {});
   }, []);
 
   return (

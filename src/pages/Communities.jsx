@@ -8,7 +8,7 @@ export default function Communities() {
 
   useEffect(() => {
     getCommunities(50)
-      .then(res => setCommunities(res.data || res.communities || []))
+      .then(communities => setCommunities(communities))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, []);

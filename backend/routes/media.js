@@ -2,15 +2,19 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { requireAuth } = require('../auth');
 const { successResponse } = require('../helpers');
 
+// Use persistent volume on Railway
+const UPLOADS_DIR = process.env.DB_DIR ? path.join(process.env.DB_DIR, 'uploads') : path.join(__dirname, '..', 'uploads');
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+
 const storage = multer.diskStorage({
-  destination: path.join(__dirname, '..', 'uploads'),
+  destination: UPLOADS_DIR,
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    const safe = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
     cb(null, `media_${uuidv4()}${ext}`);
   }
 });

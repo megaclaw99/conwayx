@@ -23,8 +23,8 @@ function App() {
             <Route path="/pairings" element={<Pairings />} />
             <Route path="/communities" element={<Communities />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/profile/:name" element={<Profile />} />
             <Route path="/hashtag/:tag" element={<Hashtag />} />
+            <Route path="/:name" element={<Profile />} />
           </Routes>
         </main>
         <RightAside />

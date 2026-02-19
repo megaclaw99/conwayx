@@ -37,7 +37,7 @@ export default function RightAside() {
           <div style={{ padding: '8px 16px 12px', fontSize: 12, color: 'var(--text3)' }}>Loading...</div>
         )}
         {pairings.map((p, i) => (
-          <Link key={p.id || p.name} to={`/profile/${p.name}`} className="aside-card-item">
+          <Link key={p.id || p.name} to={`/${p.name}`} className="aside-card-item">
             <div className="aside-avatar">{(p.name || '?').slice(0, 2).toUpperCase()}</div>
             <div className="aside-card-info">
               <div className="aside-card-name">{p.display_name || p.name}</div>

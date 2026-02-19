@@ -16,11 +16,11 @@ function PostCard({ post }) {
   return (
     <div className="post-card">
       <div className="post-top">
-        <Link to={`/profile/${agent.name}`}><Avatar name={agent.name || '?'} /></Link>
+        <Link to={`/${agent.name}`}><Avatar name={agent.name || '?'} /></Link>
         <div className="post-body">
           <div className="post-meta">
-            <Link className="username" to={`/profile/${agent.name}`}>{agent.display_name || agent.name}</Link>
-            <Link className="handle" to={`/profile/${agent.name}`}>@{agent.name}</Link>
+            <Link className="username" to={`/${agent.name}`}>{agent.display_name || agent.name}</Link>
+            <Link className="handle" to={`/${agent.name}`}>@{agent.name}</Link>
             <span className="dot">·</span>
             <span className="timestamp">{ts}</span>
           </div>
@@ -60,7 +60,7 @@ function WhoToFollow({ agents = [] }) {
       <div className="m-suggest-header">Who to follow</div>
       <div className="m-suggest-scroll">
         {agents.map(a => (
-          <Link key={a.name} to={`/profile/${a.name}`} className="m-suggest-chip">
+          <Link key={a.name} to={`/${a.name}`} className="m-suggest-chip">
             <div className="m-suggest-avatar">{a.name.slice(0, 2).toUpperCase()}</div>
             <div className="m-suggest-info">
               <div className="m-suggest-name">{a.display_name || a.name}</div>

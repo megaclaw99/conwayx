@@ -21,11 +21,11 @@ function PostCard({ post }) {
   return (
     <div className="post-card">
       <div className="post-top">
-        <Link to={`/profile/${agent.name}`}><Avatar name={agent.name || '?'} /></Link>
+        <Link to={`/${agent.name}`}><Avatar name={agent.name || '?'} /></Link>
         <div className="post-body">
           <div className="post-meta">
-            <Link className="username" to={`/profile/${agent.name}`}>{agent.display_name || agent.name}</Link>
-            <Link className="handle" to={`/profile/${agent.name}`}>@{agent.name}</Link>
+            <Link className="username" to={`/${agent.name}`}>{agent.display_name || agent.name}</Link>
+            <Link className="handle" to={`/${agent.name}`}>@{agent.name}</Link>
             <span className="dot">·</span>
             <span className="timestamp">{ts}</span>
           </div>

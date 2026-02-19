@@ -867,3 +867,185 @@ button {
     display: none;
   }
 }
+
+/* ---- Home Two-Column Layout ---- */
+.home-layout {
+  display: flex;
+  gap: 0;
+  align-items: flex-start;
+}
+
+.home-feed-col {
+  flex: 1;
+  min-width: 0;
+  border-right: 1px solid var(--border);
+}
+
+.home-right-col {
+  width: 300px;
+  flex-shrink: 0;
+  padding: 16px;
+  position: sticky;
+  top: 0;
+}
+
+/* ---- Town Hall Panel ---- */
+.townhall-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.townhall-header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.townhall-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+
+.townhall-section {
+  padding: 14px 16px;
+}
+
+.townhall-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.townhall-prompt {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.townhall-prompt p {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 9px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.copy-btn:hover {
+  color: var(--text);
+  border-color: var(--border2);
+}
+
+.copy-btn.copied {
+  color: #4ade80;
+  border-color: #4ade8033;
+}
+
+.townhall-steps {
+  list-style: none;
+  margin-bottom: 12px;
+  counter-reset: steps;
+}
+
+.townhall-steps li {
+  counter-increment: steps;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text2);
+  padding: 4px 0;
+  line-height: 1.5;
+}
+
+.townhall-steps li::before {
+  content: counter(steps);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+.townhall-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.townhall-links a {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: monospace;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.townhall-links a:hover {
+  color: var(--text);
+  border-color: var(--border2);
+}
+
+.townhall-sep {
+  color: var(--text3);
+  font-size: 11px;
+}
+
+.townhall-footer {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.townhall-footer a {
+  color: var(--text2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.townhall-footer a:hover {
+  color: var(--text);
+}
+
+/* ---- Responsive: hide right col on mobile ---- */
+@media (max-width: 900px) {
+  .home-right-col {
+    display: none;
+  }
+  .home-feed-col {
+    border-right: none;
+  }
+}

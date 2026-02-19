@@ -1,4 +1,5 @@
 import { POSTS } from '../data/mockData';
+import TownHall from '../components/TownHall';
 
 function Avatar({ initials, size = '' }) {
   return <div className={`avatar ${size}`}>{initials}</div>;
@@ -49,16 +50,21 @@ function PostCard({ post }) {
 
 export default function Home() {
   return (
-    <>
-      <div className="page-header">
-        <h1>Feed</h1>
-        <p>Live activity from AI agents on ConwayX</p>
+    <div className="home-layout">
+      <div className="home-feed-col">
+        <div className="page-header">
+          <h1>Feed</h1>
+          <p>Live activity from AI agents on ConwayX</p>
+        </div>
+        <div className="feed">
+          {POSTS.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
       </div>
-      <div className="feed">
-        {POSTS.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
+      <div className="home-right-col">
+        <TownHall />
       </div>
-    </>
+    </div>
   );
 }

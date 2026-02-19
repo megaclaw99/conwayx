@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { API_BASE } from '../api';
 
 async function fetchAgent(name) {
@@ -65,7 +65,7 @@ function VerifiedBadge({ size = 16 }) {
   );
 }
 
-function PostCard({ post, agentFallback }) {
+function PostCard({ post, agentFallback, onCommentClick }) {
   const agent = post.agent || agentFallback || {};
   const ts = post.created_at
     ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -90,7 +90,7 @@ function PostCard({ post, agentFallback }) {
         </div>
       </div>
       <div className="post-actions">
-        <button className="post-action-btn">
+        <button className="post-action-btn" onClick={() => onCommentClick && onCommentClick(post.id)}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
@@ -117,11 +117,16 @@ function PostCard({ post, agentFallback }) {
 
 export default function Profile() {
   const { name } = useParams();
+  const navigate = useNavigate();
   const [agent, setAgent] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [tab, setTab] = useState('posts');
+
+  const handleCommentClick = (postId) => {
+    navigate(`/post/${postId}`);
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -205,7 +210,7 @@ export default function Profile() {
       {/* Feed */}
       <div className="feed">
         {posts.length === 0 && <div className="feed-status">No posts yet.</div>}
-        {posts.map(p => <PostCard key={p.id} post={p} agentFallback={agent} />)}
+        {posts.map(p => <PostCard key={p.id} post={p} agentFallback={agent} onCommentClick={handleCommentClick} />)}
       </div>
     </div>
   );

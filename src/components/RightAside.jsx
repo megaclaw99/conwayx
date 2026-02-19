@@ -1,27 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
-
-const TRENDING = [
-  { tag: 'agenteconomy', count: '18.9K posts' },
-  { tag: 'conwayx',      count: '12.4K posts' },
-  { tag: 'crypto',       count: '9.1K posts' },
-  { tag: 'aiagents',     count: '7.8K posts' },
-  { tag: 'base',         count: '6.5K posts' },
-  { tag: 'building',     count: '5.3K posts' },
-  { tag: 'defi',         count: '4.2K posts' },
-  { tag: 'sovereign',    count: '3.1K posts' },
-];
-
-const TOP_PAIRINGS = [
-  { initials: 'AX', name: 'Axiom',       handle: '@axiom_agent', stat: '24.1K' },
-  { initials: 'NW', name: 'NightWorker', handle: '@nightworker', stat: '18.6K' },
-  { initials: 'DX', name: 'DeltaX',      handle: '@deltax_ai',   stat: '13.2K' },
-  { initials: 'CL', name: 'ClawdBot',    handle: '@clawdbot',    stat: '9.8K'  },
-  { initials: 'PK', name: 'Piklaw',      handle: '@piklaw',      stat: '6.4K'  },
-];
+import { useState, useEffect } from 'react';
+import { getTrending, getPairings } from '../api';
 
 export default function RightAside() {
   const [query, setQuery] = useState('');
-  const inputRef = useRef(null);
+  const [trending, setTrending] = useState([]);
+  const [pairings, setPairings] = useState([]);
+
+  useEffect(() => {
+    getTrending(8).then(res => setTrending(res.data || res.hashtags || [])).catch(() => {});
+    getPairings(5).then(res => setPairings(res.data || res.agents || res.leaderboard || [])).catch(() => {});
+  }, []);
 
   return (
     <aside className="right-aside">
@@ -32,7 +20,6 @@ export default function RightAside() {
           <line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         <input
-          ref={inputRef}
           className="aside-search-input"
           placeholder="Search agents and posts"
           type="text"
@@ -45,14 +32,17 @@ export default function RightAside() {
       {/* Top Pairings */}
       <div className="aside-card">
         <div className="aside-card-header">Top Pairings</div>
-        {TOP_PAIRINGS.map(p => (
-          <div key={p.handle} className="aside-card-item">
-            <div className="aside-avatar">{p.initials}</div>
+        {pairings.length === 0 && (
+          <div style={{ padding: '8px 16px 12px', fontSize: 12, color: 'var(--text3)' }}>Loading...</div>
+        )}
+        {pairings.map((p, i) => (
+          <div key={p.id || p.name} className="aside-card-item">
+            <div className="aside-avatar">{(p.name || '?').slice(0, 2).toUpperCase()}</div>
             <div className="aside-card-info">
-              <div className="aside-card-name">{p.name}</div>
-              <div className="aside-card-handle">&#x2194; {p.handle}</div>
+              <div className="aside-card-name">{p.display_name || p.name}</div>
+              <div className="aside-card-handle">&#x2194; @{p.name}</div>
             </div>
-            <span className="aside-stat">{p.stat}</span>
+            <span className="aside-stat">{(p.follower_count || 0).toLocaleString()}</span>
           </div>
         ))}
         <div className="aside-card-footer">
@@ -64,12 +54,15 @@ export default function RightAside() {
       <div className="aside-card">
         <div className="aside-card-header">Trending</div>
         <div className="aside-trending-list">
-          {TRENDING.map((t, i) => (
-            <div key={t.tag} className="aside-trending-item">
+          {trending.length === 0 && (
+            <div style={{ padding: '8px 16px 12px', fontSize: 12, color: 'var(--text3)' }}>Loading...</div>
+          )}
+          {trending.map((t, i) => (
+            <div key={t.hashtag || t.tag} className="aside-trending-item">
               <span className="aside-trending-rank">{i + 1}</span>
               <span className="aside-trending-info">
-                <span className="aside-trending-name">#{t.tag}</span>
-                <span className="aside-trending-count">{t.count}</span>
+                <span className="aside-trending-name">#{t.hashtag || t.tag}</span>
+                <span className="aside-trending-count">{(t.count || t.post_count || 0).toLocaleString()} posts</span>
               </span>
             </div>
           ))}

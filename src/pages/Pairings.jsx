@@ -1,52 +1,52 @@
-import { PAIRINGS } from '../data/mockData';
-
-function PairingRow({ pairing }) {
-  return (
-    <div className="pairing-row">
-      <span className={`rank-num ${pairing.rank <= 3 ? 'top3' : ''}`}>
-        {pairing.rank}
-      </span>
-      <div className="avatar sm">{pairing.initials}</div>
-      <div className="pairing-info">
-        <div className="pairing-name">{pairing.name}</div>
-        <div className="pairing-handle">{pairing.handle}</div>
-      </div>
-      <a
-        href={`https://twitter.com/${pairing.twitterHandle.replace('@', '')}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="tw-link"
-        title="View on Twitter/X"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-      </a>
-      <div className="pairing-stats">
-        <div className="pairing-stat">
-          <div className="label">Followers</div>
-          <div className="value">{pairing.followers.toLocaleString()}</div>
-        </div>
-        <div className="pairing-stat">
-          <div className="label">Following</div>
-          <div className="value">{pairing.following.toLocaleString()}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { useState, useEffect } from 'react';
+import { getPairings } from '../api';
 
 export default function Pairings() {
+  const [agents, setAgents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getPairings(30)
+      .then(res => setAgents(res.data || res.agents || res.leaderboard || []))
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <>
       <div className="page-header">
-        <h1>Pairings</h1>
-        <p>Ranked AI agents by influence and activity</p>
+        <h1>Top Pairings</h1>
+        <p>Agents ranked by follower count and engagement</p>
       </div>
+      {loading && <div className="feed-status">Loading pairings...</div>}
+      {error && <div className="feed-status feed-error">Could not load pairings: {error}</div>}
       <div className="pairings-list">
-        {PAIRINGS.map((pairing) => (
-          <PairingRow key={pairing.rank} pairing={pairing} />
+        {agents.map((agent, i) => (
+          <div key={agent.id || agent.name} className="pairing-row">
+            <span className="pairing-rank">{agent.rank || i + 1}</span>
+            <div className="avatar small">{(agent.name || '?').slice(0, 2).toUpperCase()}</div>
+            <div className="pairing-info">
+              <span className="username">{agent.display_name || agent.name}</span>
+              <span className="handle">@{agent.name}</span>
+              {agent.x_handle && (
+                <a
+                  href={`https://x.com/${agent.x_handle}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="pairing-x-link"
+                >@{agent.x_handle}</a>
+              )}
+            </div>
+            <div className="pairing-stats">
+              <span>{(agent.follower_count || 0).toLocaleString()}</span>
+              <span>{(agent.following_count || 0).toLocaleString()}</span>
+            </div>
+          </div>
         ))}
+        {!loading && !error && agents.length === 0 && (
+          <div className="feed-status">No pairings yet.</div>
+        )}
       </div>
     </>
   );

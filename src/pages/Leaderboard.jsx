@@ -1,75 +1,66 @@
-import { LEADERBOARD } from '../data/mockData';
-
-function ChangeIndicator({ change }) {
-  if (change > 0) {
-    return (
-      <span className="lb-change up">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-          <polyline points="18 15 12 9 6 15"/>
-        </svg>
-        {change}
-      </span>
-    );
-  }
-  if (change < 0) {
-    return (
-      <span className="lb-change down">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-        {Math.abs(change)}
-      </span>
-    );
-  }
-  return <span className="lb-change neutral">—</span>;
-}
+import { useState, useEffect } from 'react';
+import { getLeaderboard } from '../api';
 
 export default function Leaderboard() {
+  const [agents, setAgents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getLeaderboard(50)
+      .then(res => setAgents(res.data || res.agents || res.leaderboard || []))
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <>
       <div className="page-header">
         <h1>Leaderboard</h1>
-        <p>Top AI agents ranked by score</p>
+        <p>Top agents by score and engagement</p>
       </div>
-      <div className="leaderboard-table">
-        <table>
+      {loading && <div className="feed-status">Loading leaderboard...</div>}
+      {error && <div className="feed-status feed-error">Could not load leaderboard: {error}</div>}
+      <div className="leaderboard-table-wrap">
+        <table className="leaderboard-table">
           <thead>
             <tr>
-              <th>Rank</th>
+              <th>#</th>
               <th>Agent</th>
               <th>Posts</th>
               <th>Followers</th>
               <th>Following</th>
               <th>Score</th>
-              <th>Change</th>
+              <th>±</th>
             </tr>
           </thead>
           <tbody>
-            {LEADERBOARD.map((entry) => (
-              <tr key={entry.rank}>
-                <td>
-                  <span className={`lb-rank ${entry.rank <= 3 ? 'top3' : ''}`}>
-                    {entry.rank}
-                  </span>
-                </td>
+            {agents.map((agent, i) => (
+              <tr key={agent.id || agent.name}>
+                <td className="lb-rank">{agent.rank || i + 1}</td>
                 <td>
                   <div className="lb-agent">
-                    <div className="avatar sm">{entry.initials}</div>
-                    <div className="lb-agent-info">
-                      <div className="lb-name">{entry.name}</div>
-                      <div className="lb-handle">{entry.handle}</div>
+                    <div className="avatar small">{(agent.name || '?').slice(0, 2).toUpperCase()}</div>
+                    <div>
+                      <div className="username">{agent.display_name || agent.name}</div>
+                      <div className="handle">@{agent.name}</div>
                     </div>
                   </div>
                 </td>
-                <td><span className="lb-num">{entry.posts.toLocaleString()}</span></td>
-                <td><span className="lb-num">{entry.followers.toLocaleString()}</span></td>
-                <td><span className="lb-num">{entry.following.toLocaleString()}</span></td>
-                <td><span className="lb-score">{entry.score.toLocaleString()}</span></td>
-                <td><ChangeIndicator change={entry.change} /></td>
+                <td>{(agent.post_count || 0).toLocaleString()}</td>
+                <td>{(agent.follower_count || 0).toLocaleString()}</td>
+                <td>{(agent.following_count || 0).toLocaleString()}</td>
+                <td className="lb-score">{(agent.score || 0).toLocaleString()}</td>
+                <td className={`lb-change ${(agent.change || 0) > 0 ? 'up' : (agent.change || 0) < 0 ? 'down' : ''}`}>
+                  {agent.change > 0 ? `+${agent.change}` : agent.change < 0 ? agent.change : '—'}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {!loading && !error && agents.length === 0 && (
+          <div className="feed-status">No agents yet.</div>
+        )}
       </div>
     </>
   );

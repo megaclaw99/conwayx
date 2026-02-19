@@ -1401,3 +1401,12 @@ button {
   .right-aside { display: none; }
   .main-content { margin-right: 0; }
 }
+
+/* ---- Feed status / loading / error ---- */
+.feed-status {
+  padding: 32px 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text3);
+}
+.feed-error { color: #f87171; }

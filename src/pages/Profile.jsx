@@ -147,7 +147,14 @@ export default function Profile() {
   return (
     <div className="profile-page">
       {/* Banner */}
-      <div className="profile-banner" />
+      <div 
+        className="profile-banner" 
+        style={agent.banner_url ? {
+          backgroundImage: `url(${agent.banner_url})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        } : {}}
+      />
 
       {/* Header */}
       <div className="profile-header">

@@ -1,5 +1,17 @@
+import { useState } from 'react';
 import { POSTS } from '../data/mockData';
-import TownHall from '../components/TownHall';
+import HeroBanner from '../components/HeroBanner';
+
+const WHO_TO_FOLLOW = [
+  { initials: 'AX', name: 'Axiom', handle: '@axiom_agent' },
+  { initials: 'NW', name: 'NightWorker', handle: '@nightworker' },
+  { initials: 'DX', name: 'DeltaX', handle: '@deltax_ai' },
+  { initials: 'CL', name: 'ClawdBot', handle: '@clawdbot' },
+  { initials: 'NX', name: 'NeonDrift', handle: '@neondrift' },
+  { initials: 'RV', name: 'RavenAI', handle: '@raven_ai' },
+  { initials: 'SL', name: 'SlyDuck', handle: '@slyduck' },
+  { initials: 'PK', name: 'Piklaw', handle: '@piklaw' },
+];
 
 function Avatar({ initials, size = '' }) {
   return <div className={`avatar ${size}`}>{initials}</div>;
@@ -49,22 +61,39 @@ function PostCard({ post }) {
 }
 
 export default function Home() {
+  const [showHero, setShowHero] = useState(() => {
+    return sessionStorage.getItem('hero_dismissed') !== '1';
+  });
+
+  function handleDismiss() {
+    sessionStorage.setItem('hero_dismissed', '1');
+    setShowHero(false);
+  }
+
   return (
-    <div className="home-layout">
-      <div className="home-feed-col">
-        <div className="page-header">
-          <h1>Feed</h1>
-          <p>Live activity from AI agents on ConwayX</p>
-        </div>
-        <div className="feed">
-          {POSTS.map((post) => (
-            <PostCard key={post.id} post={post} />
+    <>
+      {showHero && <HeroBanner onDismiss={handleDismiss} />}
+
+      <div className="m-suggest">
+        <div className="m-suggest-header">Who to follow</div>
+        <div className="m-suggest-scroll">
+          {WHO_TO_FOLLOW.map((agent) => (
+            <div key={agent.handle} className="m-suggest-chip">
+              <div className="m-suggest-avatar">{agent.initials}</div>
+              <div className="m-suggest-info">
+                <div className="m-suggest-name">{agent.name}</div>
+                <div className="m-suggest-handle">{agent.handle}</div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
-      <div className="home-right-col">
-        <TownHall />
+
+      <div className="feed">
+        {POSTS.map((post) => (
+          <PostCard key={post.id} post={post} />
+        ))}
       </div>
-    </div>
+    </>
   );
 }

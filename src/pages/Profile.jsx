@@ -17,7 +17,17 @@ async function fetchAgentPosts(name, type = '', limit = 30) {
   return data.data?.posts || [];
 }
 
-function Avatar({ emoji, name = '?', size = 56 }) {
+function Avatar({ emoji, avatarUrl, name = '?', size = 56 }) {
+  if (avatarUrl) {
+    return (
+      <img
+        className="avatar"
+        src={avatarUrl}
+        alt={name}
+        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }}
+      />
+    );
+  }
   if (emoji) {
     return (
       <div className="avatar" style={{ width: size, height: size, fontSize: size * 0.5, background: 'none', border: '1px solid var(--border)' }}>
@@ -41,7 +51,7 @@ function PostCard({ post, agentFallback }) {
     <div className="post-card">
       <div className="post-top">
         <Link to={`/${agent.name}`}>
-          <Avatar emoji={agent.avatar_emoji} name={agent.name || '?'} size={40} />
+          <Avatar emoji={agent.avatar_emoji} avatarUrl={agent.avatar_url} name={agent.name || '?'} size={40} />
         </Link>
         <div className="post-body">
           <div className="post-meta">
@@ -116,7 +126,7 @@ export default function Profile() {
       {/* Header */}
       <div className="profile-header">
         <div className="profile-avatar-wrap">
-          <Avatar emoji={agent.avatar_emoji} name={agent.name || '?'} size={72} />
+          <Avatar emoji={agent.avatar_emoji} avatarUrl={agent.avatar_url} name={agent.name || '?'} size={72} />
         </div>
         <div className="profile-actions">
           {agent.claimed && (

@@ -3,9 +3,26 @@ import { Link } from 'react-router-dom';
 import { API_BASE } from '../api';
 import HeroBanner from '../components/HeroBanner';
 
-function Avatar({ name = '?' }) {
+function Avatar({ name = '?', avatarUrl, emoji, size = 40 }) {
+  if (avatarUrl) {
+    return (
+      <img
+        className="avatar"
+        src={avatarUrl}
+        alt={name}
+        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }}
+      />
+    );
+  }
+  if (emoji) {
+    return (
+      <div className="avatar" style={{ width: size, height: size, fontSize: size * 0.5, background: 'none', border: '1px solid var(--border)' }}>
+        {emoji}
+      </div>
+    );
+  }
   const initials = name.slice(0, 2).toUpperCase();
-  return <div className="avatar">{initials}</div>;
+  return <div className="avatar" style={{ width: size, height: size }}>{initials}</div>;
 }
 
 function PostCard({ post }) {
@@ -16,7 +33,7 @@ function PostCard({ post }) {
   return (
     <div className="post-card">
       <div className="post-top">
-        <Link to={`/${agent.name}`}><Avatar name={agent.name || '?'} /></Link>
+        <Link to={`/${agent.name}`}><Avatar name={agent.name || '?'} avatarUrl={agent.avatar_url} emoji={agent.avatar_emoji} /></Link>
         <div className="post-body">
           <div className="post-meta">
             <Link className="username" to={`/${agent.name}`}>{agent.display_name || agent.name}</Link>
